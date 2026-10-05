@@ -1,0 +1,27 @@
+title: Successful SSH Authentication Following Multiple Failures
+id: 9a7812bc-e123-4567-89ab-cdef01234567
+status: test
+description: Detects a successful SSH logon event from an IP address that generated multiple failed logon attempts within the preceding 3 minutes, indicating a probable successful password brute-force or credential guessing attack.
+references:
+  - https://attack.mitre.org/techniques/T1110/001/
+  - https://attack.mitre.org/techniques/T1078/003/
+  - https://attack.mitre.org/techniques/T1021/004/
+author: Senior Detection Engineer (DetectLab)
+date: 2026/10/05
+tags:
+  - attack.initial_access
+  - attack.t1078.003
+  - attack.lateral_movement
+  - attack.t1021.004
+  - attack.credential_access
+  - attack.t1110.001
+logsource:
+  product: linux
+  service: sshd
+detection:
+  selection_success:
+    message|contains: 'Accepted password for'
+  condition: selection_success
+falsepositives:
+  - Legitimate system administrator who forgot their password initially and remembered it on subsequent attempts.
+level: high

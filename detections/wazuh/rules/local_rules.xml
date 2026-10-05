@@ -1,7 +1,7 @@
 <!--
-  Attack vs Detection Lab - Custom Wazuh Ruleset
+  Attack vs Detection Lab - Custom Wazuh Ruleset (Master Suite)
   File: /var/ossec/etc/rules/local_rules.xml
-  Author: Senior Detection Engineer
+  Author: Senior Detection Engineer & SOC Analyst
 -->
 <group name="local,detectlab,">
 
@@ -68,7 +68,7 @@
   <!-- INC-003: Account Creation & Group Elevation Correlation (T1136)   -->
   <!-- ================================================================= -->
   <rule id="100020" level="6">
-    <if_sid>60109</if_sid> <!-- Standard Windows Event 4720 sid in Wazuh -->
+    <if_sid>60109</if_sid>
     <description>DetectLab: A new local user account was created (Event ID 4720 - T1136.001).</description>
     <mitre>
       <id>T1136.001</id>
@@ -79,7 +79,7 @@
   </rule>
 
   <rule id="100021" level="8">
-    <if_sid>60144</if_sid> <!-- Standard Windows Event 4732 / 4728 in Wazuh -->
+    <if_sid>60144</if_sid>
     <field name="win.eventdata.targetUserName">^Administrators$|^Administradores$</field>
     <description>DetectLab: A user was added to the local Administrators security group (T1098).</description>
     <mitre>
@@ -146,6 +146,85 @@
       <technique>System Information Discovery</technique>
     </mitre>
     <group>discovery_burst,</group>
+  </rule>
+
+  <!-- ================================================================= -->
+  <!-- INC-006: SSH Compromise Multi-Stage Correlation (T1021.004/T1078) -->
+  <!-- ================================================================= -->
+  <rule id="100050" level="7">
+    <if_matched_sid>5716, 5503</if_matched_sid>
+    <description>DetectLab: Failed SSH authentication attempt for valid account.</description>
+    <group>sshd_failure,</group>
+  </rule>
+
+  <rule id="100051" level="9">
+    <if_sid>5715</if_sid>
+    <match>Accepted password for root|Accepted password for ubuntu</match>
+    <description>DetectLab: Successful SSH authentication for administrative account.</description>
+    <group>sshd_admin_login,</group>
+  </rule>
+
+  <rule id="100052" level="14" timeframe="180">
+    <if_sid>100051</if_sid>
+    <if_matched_sid>100050</if_matched_sid>
+    <same_srcip />
+    <description>DetectLab CRITICAL: Successful SSH login for administrative account following multiple failures from same IP (Possible Account Compromise - T1078 / T1021.004 / T1110.001).</description>
+    <mitre>
+      <id>T1078.003</id>
+      <id>T1021.004</id>
+      <id>T1110.001</id>
+      <tactic>Initial Access,Lateral Movement,Credential Access</tactic>
+      <technique>Valid Accounts,Remote Services,Password Guessing</technique>
+    </mitre>
+    <group>critical_compromise,sshd_compromise,</group>
+  </rule>
+
+  <!-- ================================================================= -->
+  <!-- INC-007: Web Application Security Telemetry (AppSec / DevSecOps)  -->
+  <!-- ================================================================= -->
+  <rule id="100060" level="5">
+    <decoded_as>json</decoded_as>
+    <field name="event">^LOGIN_FAILED$</field>
+    <description>DetectLab: Web application failed login attempt.</description>
+    <group>webapp,web_auth_failure,</group>
+  </rule>
+
+  <rule id="100061" level="10" frequency="10" timeframe="60">
+    <if_matched_sid>100060</if_matched_sid>
+    <same_field>sourceIp</same_field>
+    <description>DetectLab HIGH: High frequency of web application failed logins from same IP (Web Brute Force - T1110.001).</description>
+    <mitre>
+      <id>T1110.001</id>
+      <tactic>Credential Access</tactic>
+      <technique>Password Guessing</technique>
+    </mitre>
+    <group>webapp,web_brute_force,</group>
+  </rule>
+
+  <rule id="100062" level="8" frequency="4" timeframe="60">
+    <decoded_as>json</decoded_as>
+    <field name="event">^ACCESS_DENIED$</field>
+    <same_field>sourceIp</same_field>
+    <description>DetectLab MEDIUM: Repeated unauthorized access attempts to restricted web endpoints (HTTP 403 Forbidden).</description>
+    <mitre>
+      <id>T1190</id>
+      <tactic>Initial Access</tactic>
+      <technique>Exploit Public-Facing Application</technique>
+    </mitre>
+    <group>webapp,access_denied,</group>
+  </rule>
+
+  <rule id="100063" level="9" frequency="4" timeframe="60">
+    <decoded_as>json</decoded_as>
+    <field name="event">^ENDPOINT_NOT_FOUND$</field>
+    <same_field>sourceIp</same_field>
+    <description>DetectLab: Web application reconnaissance / endpoint enumeration burst (HTTP 404 Probing - T1595.002).</description>
+    <mitre>
+      <id>T1595.002</id>
+      <tactic>Reconnaissance</tactic>
+      <technique>Active Scanning: Vulnerability Scanning</technique>
+    </mitre>
+    <group>webapp,web_probing,</group>
   </rule>
 
 </group>

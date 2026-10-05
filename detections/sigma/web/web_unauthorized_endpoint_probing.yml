@@ -1,0 +1,35 @@
+title: Web Application Sensitive Endpoint Probing
+id: c7189123-9182-4819-bb12-8172948192a4
+status: test
+description: Detects repeated access denials (HTTP 403) or attempts to access restricted and non-existent configuration endpoints (/.env, /admin.php, /actuator) indicating web reconnaissance and unauthorized probing.
+references:
+  - https://attack.mitre.org/techniques/T1190/
+  - https://attack.mitre.org/techniques/T1595/002/
+author: Senior DevSecOps & Detection Engineer (DetectLab)
+date: 2026/10/05
+tags:
+  - attack.reconnaissance
+  - attack.t1595.002
+  - attack.initial_access
+  - attack.t1190
+logsource:
+  product: webapp
+  service: security_audit
+detection:
+  selection_denied:
+    event: 'ACCESS_DENIED'
+    httpStatus: 403
+  selection_probing:
+    event: 'ENDPOINT_NOT_FOUND'
+    httpStatus: 404
+    endpoint|contains:
+      - '/.env'
+      - '/admin'
+      - '/actuator'
+      - '/wp-login'
+  condition: (selection_denied or selection_probing) | count() by sourceIp >= 5
+  timeframe: 1m
+falsepositives:
+  - Broken client application hyperlinks.
+  - Authorized internal web security scanners.
+level: medium

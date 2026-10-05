@@ -1,0 +1,26 @@
+title: Web Application Authentication Brute Force
+id: f4910283-7182-4192-b812-9182374619a8
+status: test
+description: Detects a burst of failed login attempts against a web application authentication endpoint (/login) originating from a single source IP address within a one-minute timeframe.
+references:
+  - https://attack.mitre.org/techniques/T1110/001/
+  - https://owasp.org/www-community/attacks/Brute_force_attack
+author: Senior DevSecOps & Detection Engineer (DetectLab)
+date: 2026/10/05
+tags:
+  - attack.credential_access
+  - attack.t1110.001
+logsource:
+  product: webapp
+  service: security_audit
+detection:
+  selection:
+    event: 'LOGIN_FAILED'
+    endpoint: '/login'
+    httpStatus: 401
+  condition: selection | count() by sourceIp >= 10
+  timeframe: 1m
+falsepositives:
+  - Legitimate user repeatedly entering wrong credentials during mobile session expiration.
+  - Automated integration testing in non-production environments.
+level: high
