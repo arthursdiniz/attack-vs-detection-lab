@@ -1,0 +1,57 @@
+[
+  {
+    "timestamp": "2026-10-05T15:10:02.140+0000",
+    "agent": { "id": "001", "name": "lab-win11", "ip": "192.168.56.20" },
+    "rule": { "id": "100010", "level": 8, "description": "DetectLab: Suspicious PowerShell Process with Encoded or Hidden Execution Flags (T1059.001)" },
+    "data": {
+      "win": {
+        "system": {
+          "providerName": "Microsoft-Windows-Sysmon",
+          "eventID": "1",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "lab-win11"
+        },
+        "eventdata": {
+          "utcTime": "2026-10-05 15:10:02.135",
+          "processGuid": "{7C52D035-1234-5678-ABCD-000000000100}",
+          "processId": "6840",
+          "image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+          "commandLine": "powershell.exe -NoProfile -NonInteractive -EncodedCommand VwByAGkAdABlAC0ATwB1AHQAcAB1AHQAIAAnAEQAZQB0AGUAYwB0AEwAYQBiAF8AQQBkAHYAZQByAHMAYQByAHkAXwBFAG0AdQBsAGEAdABpAG8AbgBfAFMAYQBmAGUAXwBQAGEAeQBsAG8AYQBkJwA7ACAAUwB0AGEAcgB0AC0AUwBsAGUAZQBwACAALQBNAGkAbABsAGkAcwBlAGMAbwBuAGQAcwAgADIAMAAwAA==",
+          "currentDirectory": "C:\\Users\\analyst\\",
+          "user": "LAB-WIN11\\analyst",
+          "parentProcessId": "5124",
+          "parentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+          "parentCommandLine": "powershell.exe -ExecutionPolicy Bypass -File .\\attacks\\suspicious-powershell\\simulate_powershell_telemetry.ps1",
+          "hashes": "MD5=DB581E0C93683A39828CF5DE10D946A0,SHA256=DE96A68E93E240B330F323DA02F44CB5066262842ED40486100DA71E793A233D"
+        }
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-05T15:10:04.250+0000",
+    "agent": { "id": "001", "name": "lab-win11", "ip": "192.168.56.20" },
+    "rule": { "id": "100010", "level": 8, "description": "DetectLab: Suspicious PowerShell Process with Encoded or Hidden Execution Flags (T1059.001)" },
+    "data": {
+      "win": {
+        "system": {
+          "providerName": "Microsoft-Windows-Sysmon",
+          "eventID": "1",
+          "channel": "Microsoft-Windows-Sysmon/Operational",
+          "computer": "lab-win11"
+        },
+        "eventdata": {
+          "utcTime": "2026-10-05 15:10:04.240",
+          "processGuid": "{7C52D035-1234-5678-ABCD-000000000101}",
+          "processId": "7012",
+          "image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+          "commandLine": "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"Write-Output 'DetectLab_Hidden_Execution'\"",
+          "currentDirectory": "C:\\Users\\analyst\\",
+          "user": "LAB-WIN11\\analyst",
+          "parentProcessId": "5124",
+          "parentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+          "hashes": "MD5=DB581E0C93683A39828CF5DE10D946A0,SHA256=DE96A68E93E240B330F323DA02F44CB5066262842ED40486100DA71E793A233D"
+        }
+      }
+    }
+  }
+]

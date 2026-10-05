@@ -1,0 +1,52 @@
+[
+  {
+    "timestamp": "2026-10-05T15:30:15.890+0000",
+    "agent": { "id": "002", "name": "lab-ubuntu", "ip": "192.168.56.30" },
+    "rule": {
+      "id": "550",
+      "level": 7,
+      "description": "Integrity checksum changed for: '/etc/passwd'",
+      "mitre": {
+        "id": ["T1565.001"],
+        "tactic": ["Impact", "Defense Evasion"],
+        "technique": ["Stored Data Manipulation"]
+      }
+    },
+    "syscheck": {
+      "path": "/etc/passwd",
+      "event": "modified",
+      "md5_before": "c4ca4238a0b923820dcc509a6f75849b",
+      "md5_after": "eccbc87e4b5ce2fe28308fd9f2a7baf3",
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_after": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+      "uname_after": "root",
+      "gname_after": "root",
+      "perm_after": "0644",
+      "diff": "--- /etc/passwd\n+++ /etc/passwd\n@@ -38,3 +38,4 @@\n lab-target:x:1002:1002:Lab Target User:/home/lab-target:/bin/bash\n+# DetectLab_FIM_Simulation_Marker_1791214215"
+    }
+  },
+  {
+    "timestamp": "2026-10-05T15:32:10.120+0000",
+    "agent": { "id": "001", "name": "lab-win11", "ip": "192.168.56.20" },
+    "rule": {
+      "id": "550",
+      "level": 7,
+      "description": "Integrity checksum changed for: 'C:\\LabStaging\\sensitive-config.txt'",
+      "mitre": {
+        "id": ["T1565.001"],
+        "tactic": ["Impact"],
+        "technique": ["Stored Data Manipulation"]
+      }
+    },
+    "syscheck": {
+      "path": "C:\\LabStaging\\sensitive-config.txt",
+      "event": "modified",
+      "md5_before": "8F3C7E192A0D4B681122334455667788",
+      "md5_after": "9A2B3C4D5E6F708192A3B4C5D6E7F809",
+      "sha256_before": "5E884898DA28047151D0E56F8DC6292773603D0D6AABDD62A11EF721D1542D8",
+      "sha256_after": "4B227777D4DD1FC61C6F884F48641D02B4D121D3FD328CB08B5531FCACDABF8A",
+      "uname_after": "LAB-WIN11\\analyst",
+      "diff": "--- sensitive-config.txt\n+++ sensitive-config.txt\n@@ -2,3 +2,3 @@\n-ADMIN_BYPASS=FALSE\n+ADMIN_BYPASS=TRUE"
+    }
+  }
+]

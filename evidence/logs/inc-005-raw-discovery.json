@@ -1,0 +1,35 @@
+[
+  {
+    "timestamp": "2026-10-05T15:40:01.050+0000",
+    "agent": { "id": "001", "name": "lab-win11", "ip": "192.168.56.20" },
+    "rule": { "id": "100040", "level": 5, "description": "DetectLab: System Discovery Binary Executed (T1082 / T1087 / T1016)" },
+    "data": {
+      "win": {
+        "system": { "eventID": "1", "channel": "Microsoft-Windows-Sysmon/Operational" },
+        "eventdata": { "image": "C:\\Windows\\System32\\whoami.exe", "commandLine": "whoami.exe /all", "parentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" }
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-05T15:40:03.210+0000",
+    "agent": { "id": "001", "name": "lab-win11", "ip": "192.168.56.20" },
+    "rule": { "id": "100040", "level": 5, "description": "DetectLab: System Discovery Binary Executed (T1082 / T1087 / T1016)" },
+    "data": {
+      "win": {
+        "system": { "eventID": "1", "channel": "Microsoft-Windows-Sysmon/Operational" },
+        "eventdata": { "image": "C:\\Windows\\System32\\net.exe", "commandLine": "net.exe user", "parentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" }
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-05T15:40:08.500+0000",
+    "agent": { "id": "001", "name": "lab-win11", "ip": "192.168.56.20" },
+    "rule": { "id": "100041", "level": 10, "description": "DetectLab: High-frequency burst of system discovery commands (T1082 / T1087.001 / T1016)" },
+    "data": {
+      "win": {
+        "system": { "eventID": "1", "channel": "Microsoft-Windows-Sysmon/Operational" },
+        "eventdata": { "image": "C:\\Windows\\System32\\ipconfig.exe", "commandLine": "ipconfig.exe /all", "parentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" }
+      }
+    }
+  }
+]

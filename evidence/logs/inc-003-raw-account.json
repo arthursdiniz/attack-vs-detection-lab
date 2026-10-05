@@ -1,0 +1,39 @@
+[
+  {
+    "timestamp": "2026-10-05T15:20:00.120+0000",
+    "agent": { "id": "001", "name": "lab-win11", "ip": "192.168.56.20" },
+    "rule": { "id": "100020", "level": 6, "description": "DetectLab: A new local user account was created (Event ID 4720 - T1136.001)" },
+    "data": {
+      "win": {
+        "system": { "eventID": "4720", "channel": "Security", "computer": "lab-win11" },
+        "eventdata": {
+          "targetUserName": "lab-backdoor",
+          "targetDomainName": "LAB-WIN11",
+          "subjectUserName": "analyst",
+          "subjectDomainName": "LAB-WIN11",
+          "subjectUserSid": "S-1-5-21-1234567890-1234567890-1234567890-1001",
+          "samAccountName": "lab-backdoor",
+          "userAccountControl": "0x200"
+        }
+      }
+    }
+  },
+  {
+    "timestamp": "2026-10-05T15:20:15.340+0000",
+    "agent": { "id": "001", "name": "lab-win11", "ip": "192.168.56.20" },
+    "rule": { "id": "100022", "level": 12, "description": "DetectLab CRITICAL: Newly created user added to local Administrators group within 120s (T1136.001 / T1098)" },
+    "data": {
+      "win": {
+        "system": { "eventID": "4732", "channel": "Security", "computer": "lab-win11" },
+        "eventdata": {
+          "targetUserName": "Administrators",
+          "targetDomainName": "Builtin",
+          "targetSid": "S-1-5-32-544",
+          "subjectUserName": "analyst",
+          "memberSid": "S-1-5-21-1234567890-1234567890-1234567890-1005",
+          "memberName": "lab-backdoor"
+        }
+      }
+    }
+  }
+]
