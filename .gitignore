@@ -1,0 +1,71 @@
+# ==========================================
+# Attack vs Detection Lab - .gitignore
+# ==========================================
+
+# Virtual Machine Disks and Images
+*.vdi
+*.vmdk
+*.vhd
+*.vhdx
+*.ova
+*.ovf
+*.iso
+*.img
+*.qcow2
+
+# VirtualBox & Hypervisor metadata
+*.vbox
+*.vbox-prev
+*.nvram
+*.vmx
+*.vmxf
+*.vmsd
+
+# Memory Dumps and Temporary Raw Artifacts
+*.dmp
+*.raw
+*.mem
+*.crash
+
+# Secrets, Credentials, Local Env
+.env
+*.pem
+*.key
+*.pfx
+*.p12
+id_rsa
+id_rsa.pub
+secrets.txt
+passwords.txt
+
+# OS Generated Files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# IDE and Editor Cache
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+venv/
+
+# Large temporary captures (PCAP) - keep only curated samples in evidence/
+*.pcap
+*.cap
+*.pcapng
+!evidence/samples/*.pcap
+
+# Temporary logs (exclude massive unparsed event exports, keep curated samples)
+logs/raw/
+*.evtx
+!evidence/logs/*.evtx
