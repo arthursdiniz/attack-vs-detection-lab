@@ -1,0 +1,30 @@
+title: Multiple Failed Windows Logons from Same Source (Brute Force)
+id: c4b19e27-810a-4298-b8ce-e2f676451e9b
+status: test
+description: Detects a burst of failed Windows logon events (Event ID 4625) originating from the same source IP address within a one-minute window, indicating password guessing, spraying, or automated brute-force attacks.
+references:
+  - https://attack.mitre.org/techniques/T1110/001/
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4625
+author: Senior Detection Engineer (DetectLab)
+date: 2026/10/05
+tags:
+  - attack.credential_access
+  - attack.t1110.001
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4625
+  filter_null_ip:
+    IpAddress:
+      - '-'
+      - '127.0.0.1'
+      - '::1'
+  condition: selection and not filter_null_ip | count() by IpAddress >= 10
+  timeframe: 1m
+falsepositives:
+  - Network-connected workstations with stale mapped drive credentials.
+  - Windows services configured with expired service account passwords.
+  - Users experiencing keyboard layout issues during Windows logon.
+level: high

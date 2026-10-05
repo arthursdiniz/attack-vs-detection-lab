@@ -1,0 +1,41 @@
+<!--
+  Attack vs Detection Lab - Custom Wazuh Ruleset
+  File: /var/ossec/etc/rules/local_rules.xml
+  Author: Senior Detection Engineer
+-->
+<group name="local,detectlab,">
+
+  <!-- ================================================================= -->
+  <!-- INC-001: Authentication Brute Force Detection                     -->
+  <!-- MITRE ATT&CK: T1110.001 (Password Guessing)                       -->
+  <!-- ================================================================= -->
+
+  <!-- Base correlation rule: 10 failed authentication attempts within 60 seconds -->
+  <rule id="100001" level="10" frequency="10" timeframe="60">
+    <if_matched_sid>5710, 5716, 5760, 5503, 60122</if_matched_sid>
+    <same_srcip />
+    <description>DetectLab: High frequency of failed authentications from same source IP (Possible Brute Force / Spray - T1110.001).</description>
+    <mitre>
+      <id>T1110.001</id>
+      <tactic>Credential Access</tactic>
+      <technique>Password Guessing</technique>
+    </mitre>
+    <group>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,attack_t1110,</group>
+  </rule>
+
+  <!-- Multi-event correlation: Successful authentication from IP that just brute-forced -->
+  <rule id="100002" level="13" timeframe="300">
+    <if_sid>100001</if_sid>
+    <if_matched_sid>5715, 60106</if_matched_sid>
+    <same_srcip />
+    <description>DetectLab CRITICAL: Successful authentication following a brute-force attack from the same IP (Potential Account Compromise - T1078 / T1110.001).</description>
+    <mitre>
+      <id>T1078</id>
+      <id>T1110.001</id>
+      <tactic>Initial Access,Credential Access</tactic>
+      <technique>Valid Accounts,Password Guessing</technique>
+    </mitre>
+    <group>account_compromise,authentication_success,attack_t1078,</group>
+  </rule>
+
+</group>

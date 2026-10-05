@@ -1,0 +1,27 @@
+title: Multiple Failed SSH Authentication Attempts (Brute Force)
+id: 5a8e2b81-3f41-47ec-8d76-e137889b7241
+status: test
+description: Detects a high volume of failed SSH authentication attempts from a single source IP address within a short timeframe, indicating potential password guessing or brute force activity.
+references:
+  - https://attack.mitre.org/techniques/T1110/001/
+  - https://man7.org/linux/man-pages/man8/sshd.8.html
+author: Senior Detection Engineer (DetectLab)
+date: 2026/10/05
+tags:
+  - attack.credential_access
+  - attack.t1110.001
+logsource:
+  product: linux
+  service: sshd
+detection:
+  selection:
+    - message|contains:
+        - 'Failed password for'
+        - 'authentication failure'
+  condition: selection | count() by src_ip >= 10
+  timeframe: 1m
+falsepositives:
+  - Automated administrative tools (Ansible, Puppet, SSH scripts) using outdated credentials.
+  - Legitimate users repeatedly mistyping complex passwords.
+  - Internal vulnerability scanners performing authorized credential compliance checks.
+level: high
