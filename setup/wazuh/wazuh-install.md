@@ -25,9 +25,9 @@ Before initiating installation on `lab-wazuh`:
 
 ---
 
-## 3. Automated All-in-One Installation (Wazuh Assistant)
+## 3. Automated All-in-One Installation (Wazuh Quickstart)
 
-The official Wazuh Quickstart Assistant configures certificates, services, and default users automatically.
+The official Wazuh Quickstart script configures certificates, services, and default users automatically.
 
 ### Step 1: Update and install prerequisites
 ```bash
@@ -35,9 +35,9 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y curl apt-transport-https lsb-release gnupg tar net-tools
 ```
 
-### Step 2: Download and execute the Wazuh Installation Assistant
+### Step 2: Download and execute the Wazuh Quickstart Script
 ```bash
-# Download the official installation assistant
+# Download the official installation script
 curl -sO https://packages.wazuh.com/4.11/wazuh-install.sh
 curl -sO https://packages.wazuh.com/4.11/config.yml
 
