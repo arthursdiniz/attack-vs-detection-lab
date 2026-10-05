@@ -1,0 +1,162 @@
+<!--
+  Attack vs Detection Lab - Microsoft Sysmon Configuration
+  Target Platform: Windows 11 Enterprise (64-bit)
+  Sysmon Schema Version: 4.90
+  Architecture: Custom Tailored for Threat Detection & Noise Filtering
+  Author: Senior Security & Detection Engineer
+-->
+<Sysmon schemaversion="4.90">
+  <!-- Hash configuration: Compute both MD5 (quick matching) and SHA256 (high collision resistance/VirusTotal) -->
+  <HashAlgorithms>MD5,SHA256</HashAlgorithms>
+  <CheckRevocation/>
+
+  <EventFiltering>
+    <!-- ================================================================= -->
+    <!-- EVENT ID 1: Process Creation (T1059, T1082, T1136, T1055, T1036) -->
+    <!-- Captures process lineage, full command lines, and parent processes -->
+    <!-- ================================================================= -->
+    <RuleGroup name="ProcessCreate_Include" groupRelation="or">
+      <ProcessCreate onmatch="include">
+        <!-- Living-off-the-Land Binaries (LOLBins) & Interpreters -->
+        <Image condition="image">powershell.exe</Image>
+        <Image condition="image">pwsh.exe</Image>
+        <Image condition="image">cmd.exe</Image>
+        <Image condition="image">wscript.exe</Image>
+        <Image condition="image">cscript.exe</Image>
+        <Image condition="image">mshta.exe</Image>
+        <Image condition="image">rundll32.exe</Image>
+        <Image condition="image">regsvr32.exe</Image>
+        <Image condition="image">certutil.exe</Image>
+        <Image condition="image">bitsadmin.exe</Image>
+        <Image condition="image">vssadmin.exe</Image>
+        <Image condition="image">wmic.exe</Image>
+        
+        <!-- Account & Group Manipulation Tools (INC-003) -->
+        <Image condition="image">net.exe</Image>
+        <Image condition="image">net1.exe</Image>
+        
+        <!-- System & Network Discovery Tools (INC-005) -->
+        <Image condition="image">whoami.exe</Image>
+        <Image condition="image">nltest.exe</Image>
+        <Image condition="image">systeminfo.exe</Image>
+        <Image condition="image">tasklist.exe</Image>
+        <Image condition="image">ipconfig.exe</Image>
+        <Image condition="image">netstat.exe</Image>
+        <Image condition="image">route.exe</Image>
+        <Image condition="image">quser.exe</Image>
+        <Image condition="image">qwinsta.exe</Image>
+        <Image condition="image">arp.exe</Image>
+        <Image condition="image">klist.exe</Image>
+        
+        <!-- Suspicious Execution Locations -->
+        <CurrentDirectory condition="contains">\AppData\Local\Temp</CurrentDirectory>
+        <CurrentDirectory condition="contains">\Users\Public</CurrentDirectory>
+        <CurrentDirectory condition="contains">C:\Windows\Temp</CurrentDirectory>
+        
+        <!-- Execution from User-Writable Paths -->
+        <Image condition="begin with">C:\Users\Public\</Image>
+        <Image condition="begin with">C:\Windows\Temp\</Image>
+        <Image condition="contains">\AppData\Local\Temp\</Image>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <RuleGroup name="ProcessCreate_Exclude" groupRelation="or">
+      <ProcessCreate onmatch="exclude">
+        <!-- Benign High-Volume Windows Background Tasks -->
+        <Image condition="is">C:\Windows\System32\audiodg.exe</Image>
+        <Image condition="is">C:\Windows\System32\SearchFilterHost.exe</Image>
+        <Image condition="is">C:\Windows\System32\SearchProtocolHost.exe</Image>
+        <Image condition="is">C:\Windows\System32\taskhostw.exe</Image>
+        <Image condition="is">C:\Windows\System32\conhost.exe</Image>
+        <!-- Filter Wazuh internal monitoring process noise -->
+        <ParentImage condition="is">C:\Program Files (x86)\ossec-agent\wazuh-agent.exe</ParentImage>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <!-- ================================================================= -->
+    <!-- EVENT ID 3: Network Connection (T1071, T1049, T1021)              -->
+    <!-- Captures network socket bindings from command interpreters/tools  -->
+    <!-- ================================================================= -->
+    <RuleGroup name="NetworkConnect_Include" groupRelation="or">
+      <NetworkConnect onmatch="include">
+        <!-- Interpreters making network connections (C2 / Web download simulation) -->
+        <Image condition="image">powershell.exe</Image>
+        <Image condition="image">pwsh.exe</Image>
+        <Image condition="image">cmd.exe</Image>
+        <Image condition="image">rundll32.exe</Image>
+        <Image condition="image">regsvr32.exe</Image>
+        <Image condition="image">certutil.exe</Image>
+        <Image condition="image">curl.exe</Image>
+        <!-- Sensitive Administrative Ports -->
+        <DestinationPort condition="is">22</DestinationPort>
+        <DestinationPort condition="is">445</DestinationPort>
+        <DestinationPort condition="is">3389</DestinationPort>
+        <DestinationPort condition="is">5985</DestinationPort>
+        <DestinationPort condition="is">8080</DestinationPort>
+      </NetworkConnect>
+    </RuleGroup>
+
+    <RuleGroup name="NetworkConnect_Exclude" groupRelation="or">
+      <NetworkConnect onmatch="exclude">
+        <!-- Exclude local loopback traffic noise -->
+        <DestinationIp condition="is">127.0.0.1</DestinationIp>
+        <DestinationIp condition="is">::1</DestinationIp>
+        <!-- Exclude Wazuh Agent forwarding traffic to Manager -->
+        <Image condition="is">C:\Program Files (x86)\ossec-agent\wazuh-agent.exe</Image>
+        <DestinationPort condition="is">1514</DestinationPort>
+      </NetworkConnect>
+    </RuleGroup>
+
+    <!-- ================================================================= -->
+    <!-- EVENT ID 11: File Create (T1105, T1027, T1565)                   -->
+    <!-- Detects creation of executables, scripts, and staging files       -->
+    <!-- ================================================================= -->
+    <RuleGroup name="FileCreate_Include" groupRelation="or">
+      <FileCreate onmatch="include">
+        <!-- Executable and script drops -->
+        <TargetFilename condition="end with">.exe</TargetFilename>
+        <TargetFilename condition="end with">.ps1</TargetFilename>
+        <TargetFilename condition="end with">.bat</TargetFilename>
+        <TargetFilename condition="end with">.vbs</TargetFilename>
+        <TargetFilename condition="end with">.dll</TargetFilename>
+        <!-- Drops in temporary/staging paths -->
+        <TargetFilename condition="contains">\AppData\Local\Temp\</TargetFilename>
+        <TargetFilename condition="contains">\Users\Public\</TargetFilename>
+        <TargetFilename condition="contains">C:\Windows\Temp\</TargetFilename>
+      </FileCreate>
+    </RuleGroup>
+
+    <RuleGroup name="FileCreate_Exclude" groupRelation="or">
+      <FileCreate onmatch="exclude">
+        <!-- Exclude benign installer and system temp file noise -->
+        <TargetFilename condition="end with">.tmp</TargetFilename>
+        <TargetFilename condition="end with">.log</TargetFilename>
+        <Image condition="is">C:\Windows\System32\msiexec.exe</Image>
+      </FileCreate>
+    </RuleGroup>
+
+    <!-- ================================================================= -->
+    <!-- EVENT ID 12/13/14: Registry Modifications (T1547.001, T1112)      -->
+    <!-- Captures persistence mechanisms and security posture tampering    -->
+    <!-- ================================================================= -->
+    <RuleGroup name="RegistryEvent_Include" groupRelation="or">
+      <RegistryEvent onmatch="include">
+        <!-- Persistence: Run & RunOnce keys -->
+        <TargetObject condition="contains">\CurrentVersion\Run</TargetObject>
+        <TargetObject condition="contains">\CurrentVersion\RunOnce</TargetObject>
+        <!-- Persistence: Services modification -->
+        <TargetObject condition="contains">\System\CurrentControlSet\Services</TargetObject>
+        <!-- Security Tampering: Disabling Windows Defender or Firewall -->
+        <TargetObject condition="contains">\Windows Defender</TargetObject>
+        <TargetObject condition="contains">\Policies\Microsoft\Windows\System</TargetObject>
+      </RegistryEvent>
+    </RuleGroup>
+
+    <RuleGroup name="RegistryEvent_Exclude" groupRelation="or">
+      <RegistryEvent onmatch="exclude">
+        <!-- Ignore transient background service updates -->
+        <TargetObject condition="contains">\Services\bam\UserSettings</TargetObject>
+      </RegistryEvent>
+    </RuleGroup>
+  </EventFiltering>
+</Sysmon>
