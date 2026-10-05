@@ -1,0 +1,38 @@
+[
+  {
+    "timestamp": "2026-10-05T16:15:01.120Z",
+    "event": "LOGIN_FAILED",
+    "username": "admin",
+    "sourceIp": "192.168.56.10",
+    "endpoint": "/login",
+    "httpStatus": 401,
+    "message": "Invalid credentials provided"
+  },
+  {
+    "timestamp": "2026-10-05T16:15:02.230Z",
+    "event": "LOGIN_FAILED",
+    "username": "admin",
+    "sourceIp": "192.168.56.10",
+    "endpoint": "/login",
+    "httpStatus": 401,
+    "message": "Invalid credentials provided"
+  },
+  {
+    "timestamp": "2026-10-05T16:15:15.540Z",
+    "event": "ACCESS_DENIED",
+    "username": "unauthenticated",
+    "sourceIp": "192.168.56.10",
+    "endpoint": "/api/users",
+    "httpStatus": 403,
+    "message": "Unauthorized access attempt to restricted endpoint"
+  },
+  {
+    "timestamp": "2026-10-05T16:15:20.100Z",
+    "event": "ENDPOINT_NOT_FOUND",
+    "username": "anonymous",
+    "sourceIp": "192.168.56.10",
+    "endpoint": "/.env",
+    "httpStatus": 404,
+    "message": "Resource not found (probing)"
+  }
+]
