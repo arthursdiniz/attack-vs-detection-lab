@@ -1,0 +1,25 @@
+title: Modification of Critical System Configuration File
+id: d1789c12-7819-4812-bfa2-3981726a45e1
+status: test
+description: Detects file modification events targeting sensitive operating system files or administrative configuration assets, indicating unauthorized tampering or defense evasion.
+references:
+  - https://attack.mitre.org/techniques/T1565/001/
+author: Senior Detection Engineer (DetectLab)
+date: 2026/10/05
+tags:
+  - attack.impact
+  - attack.t1565.001
+  - attack.defense_evasion
+logsource:
+  product: windows
+  category: file_event
+detection:
+  selection:
+    TargetFilename|contains:
+      - 'C:\Windows\System32\drivers\etc\hosts'
+      - 'C:\LabStaging\'
+  condition: selection
+falsepositives:
+  - Authorized system updates modifying network hosts file.
+  - Development builds deploying updated local configuration files.
+level: medium

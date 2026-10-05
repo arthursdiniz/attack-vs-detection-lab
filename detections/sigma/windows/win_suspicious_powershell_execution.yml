@@ -1,0 +1,43 @@
+title: Suspicious PowerShell Process Execution Flags
+id: b2940294-8172-4d7a-a634-92742918bb12
+status: test
+description: Detects the execution of PowerShell with suspicious command-line parameters often used by adversaries to execute obfuscated code, bypass execution policies, or conceal process windows.
+references:
+  - https://attack.mitre.org/techniques/T1059/001/
+  - https://lolbas-project.github.io/
+author: Senior Detection Engineer (DetectLab)
+date: 2026/10/05
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.defense_evasion
+  - attack.t1562.001
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_img:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+  selection_flags:
+    CommandLine|contains:
+      - '-enc '
+      - '-encodedcommand '
+      - '-encoded '
+      - '-w hidden'
+      - '-windowstyle hidden'
+      - '-executionpolicy bypass'
+      - '-ep bypass'
+      - '-nop'
+      - '-noprofile'
+  selection_staging:
+    CommandLine|contains:
+      - '\AppData\Local\Temp\'
+      - '\Users\Public\'
+      - 'C:\Windows\Temp\'
+  condition: selection_img and (selection_flags or selection_staging)
+falsepositives:
+  - Administrative deployment scripts executed by enterprise configuration managers (SCCM, Chocolatey).
+  - Software installers using hidden PowerShell wrappers to unpack dependencies.
+level: high

@@ -1,0 +1,29 @@
+title: User Added to Local Administrators Group
+id: a749b401-9231-41d1-81f7-2489e248b919
+status: test
+description: Detects the addition of a user account to the local Administrators privileged security group (Event ID 4732). Correlates with prior user creation events to detect rapid backdoor establishment.
+references:
+  - https://attack.mitre.org/techniques/T1098/
+  - https://attack.mitre.org/techniques/T1136/001/
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4732
+author: Senior Detection Engineer (DetectLab)
+date: 2026/10/05
+tags:
+  - attack.persistence
+  - attack.t1098
+  - attack.privilege_escalation
+  - attack.t1136.001
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4732
+    TargetUserName:
+      - 'Administrators'
+      - 'Administradores'
+  condition: selection
+falsepositives:
+  - Legitimate IT administrator provisioning workstation accounts.
+  - Software deployment tools creating temporary administrative service accounts.
+level: high
