@@ -1,0 +1,51 @@
+# Evidence Log: INC-001 Controlled Authentication Brute Force
+# Target: lab-ubuntu (192.168.56.30) & lab-win11 (192.168.56.20)
+# Attacker IP: 192.168.56.10 (lab-attacker)
+# Protocol: SSH (Linux) and NTLM/RDP (Windows)
+
+# --- Linux /var/log/auth.log Telemetry Stream ---
+2026-10-05T14:30:01.102345+00:00 lab-ubuntu sshd[14501]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.56.10  user=lab-target
+2026-10-05T14:30:03.220194+00:00 lab-ubuntu sshd[14501]: Failed password for lab-target from 192.168.56.10 port 49152 ssh2
+2026-10-05T14:30:05.340112+00:00 lab-ubuntu sshd[14503]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.56.10  user=lab-target
+2026-10-05T14:30:07.459203+00:00 lab-ubuntu sshd[14503]: Failed password for lab-target from 192.168.56.10 port 49154 ssh2
+2026-10-05T14:30:09.580411+00:00 lab-ubuntu sshd[14505]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.56.10  user=lab-target
+2026-10-05T14:30:11.701192+00:00 lab-ubuntu sshd[14505]: Failed password for lab-target from 192.168.56.10 port 49156 ssh2
+2026-10-05T14:30:13.821004+00:00 lab-ubuntu sshd[14507]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.56.10  user=lab-target
+2026-10-05T14:30:15.940922+00:00 lab-ubuntu sshd[14507]: Failed password for lab-target from 192.168.56.10 port 49158 ssh2
+2026-10-05T14:30:18.061103+00:00 lab-ubuntu sshd[14509]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.56.10  user=lab-target
+2026-10-05T14:30:20.181294+00:00 lab-ubuntu sshd[14509]: Failed password for lab-target from 192.168.56.10 port 49160 ssh2
+2026-10-05T14:30:22.302111+00:00 lab-ubuntu sshd[14511]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.56.10  user=lab-target
+2026-10-05T14:30:24.422301+00:00 lab-ubuntu sshd[14511]: Failed password for lab-target from 192.168.56.10 port 49162 ssh2
+2026-10-05T14:30:26.541990+00:00 lab-ubuntu sshd[14513]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.56.10  user=lab-target
+2026-10-05T14:30:28.662118+00:00 lab-ubuntu sshd[14513]: Failed password for lab-target from 192.168.56.10 port 49164 ssh2
+2026-10-05T14:30:30.781903+00:00 lab-ubuntu sshd[14515]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.56.10  user=lab-target
+2026-10-05T14:30:32.902011+00:00 lab-ubuntu sshd[14515]: Failed password for lab-target from 192.168.56.10 port 49166 ssh2
+2026-10-05T14:30:35.021894+00:00 lab-ubuntu sshd[14517]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.56.10  user=lab-target
+2026-10-05T14:30:37.142019+00:00 lab-ubuntu sshd[14517]: Failed password for lab-target from 192.168.56.10 port 49168 ssh2
+2026-10-05T14:30:39.261902+00:00 lab-ubuntu sshd[14519]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.56.10  user=lab-target
+2026-10-05T14:30:41.382011+00:00 lab-ubuntu sshd[14519]: Failed password for lab-target from 192.168.56.10 port 49170 ssh2
+
+# --- Windows Security Event ID 4625 Sample (Normalized JSON from Wazuh Agent) ---
+{
+  "timestamp": "2026-10-05T14:31:05.120+0000",
+  "agent": { "id": "001", "name": "lab-win11", "ip": "192.168.56.20" },
+  "rule": { "id": "60122", "level": 5, "description": "Logon Failure - Unknown user or bad password" },
+  "data": {
+    "win": {
+      "system": {
+        "eventID": "4625",
+        "channel": "Security",
+        "computer": "lab-win11"
+      },
+      "eventdata": {
+        "targetUserName": "lab-target",
+        "ipAddress": "192.168.56.10",
+        "ipPort": "50234",
+        "logonType": "3",
+        "status": "0xc000006d",
+        "subStatus": "0xc000006a",
+        "workstationName": "KALI"
+      }
+    }
+  }
+}
